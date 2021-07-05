@@ -1,0 +1,84 @@
+@extends('layouts.admin-home')
+@section('title', 'Wecoder-It| Semenier Approve')
+@section('content')
+<main>
+    <div class="container " style="margin-top: 40px;" >
+        <div class="page-header">
+            <h3 class="page-title">
+              Banner
+            </h3>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Wecodeit</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Semenier Approve</li>
+              </ol>
+            </nav>
+          </div>
+          <table id="myTable" class="table">
+            <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Topic</th>
+                  <th>Date Time</th>
+                  <th>Vedio Link</th>
+                  <th>Join Link</th>
+                  <th>Admin-Approve</th>
+                  <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @php $count=0; @endphp
+              @foreach($seminerapprove as $item)
+              @php $count+=1 @endphp
+              <tr>
+                  <td>{{$count}}</td>
+                  <td>{{$item->topic}}</td>
+                  <td>{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $item->datetime)->format('d-M-y g:i A')}}</td>
+                  <td>{{$item->vedio_link}}</td>
+                  <td>{{$item->join_link}}</td>
+                  <td style="text-align: center;">
+                    @if($item->approve == 1)
+                    <a href="javascript:void(0)" class=" updatesemenirapprove" id="sesemenirApprove-{{$item->id }}"
+                        section_id ="{{$item->id}}" >Active</a>
+                    @else
+                    <a href="javascript:void(0)" class=" updatesemenirapprove" id="sesemenirApprove-{{$item->id }}"
+                        section_id ="{{$item->id}}" >Deactive</a>
+                    @endif
+                  </td>
+                  <td>
+                  
+                    <div class="btn-group">
+                      @if(Auth::guard('admin')->user()->can('seminars.edit'))
+                      <a class="btn btn-info editsem"  href="{{url('admin/seminars/edit/'.Crypt::encrypt($item->id))}}" >Edit<a>
+                        @else
+                        <a>Non-Approve</a>
+                         @endif
+                         @if(Auth::guard('admin')->user()->can('seminars.view'))
+                        <a class="btn btn-warning "  href="{{url('admin/seminars/view/'.Crypt::encrypt($item->id))}}" >View<a>
+                          @else
+                          <a>Non-Approve</a>
+                          @endif
+
+                          @if(Auth::guard('admin')->user()->can('seminars.delete'))
+                        <form action="{{url('admin/seminars/delete/'.Crypt::encrypt($item->id))}}" method="post">   
+                          @csrf
+                            <button type="submit" data-name="{{$item->slug}}" class="btn btn-danger btn-icon-text right delete-confirm"> 
+                              <i class="fas fa-trash-alt btn-icon-prepend"></i>
+                               Delete
+                            </button>   
+                        </form>
+
+                        @else
+                          <a>Non-Approve</a>
+                          @endif
+                    </div>
+                    
+                  </td>
+              </tr>
+           
+              @endforeach
+            </tbody>
+          </table>
+    </div>
+  </main>
+@endsection
